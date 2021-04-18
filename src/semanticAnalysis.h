@@ -45,8 +45,16 @@ public:
     void exitNumber(CACTParser::NumberContext * /*ctx*/) override { }
 
 
-    void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }
-    void exitEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }
-    void visitTerminal(antlr4::tree::TerminalNode * /*node*/) override { }
-    void visitErrorNode(antlr4::tree::ErrorNode * /*node*/) override { }
+    void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override {
+        //printf("++++++++++++\n");
+     }
+    void exitEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { 
+        //printf("-------------\n");
+    }
+    void visitTerminal(antlr4::tree::TerminalNode * /*node*/) override {
+        //printf("///////////\n");
+     }
+    void visitErrorNode(antlr4::tree::ErrorNode * /*node*/) override {
+        //printf("@@@@@@@@@\n");
+     }
 };
