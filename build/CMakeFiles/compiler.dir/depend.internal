@@ -804,6 +804,8 @@ CMakeFiles/compiler.dir/src/main.cpp.o
  /home/compiler39/compiler/grammar/CACTParser.h
  /home/compiler39/compiler/src/main.cpp
  /home/compiler39/compiler/src/semanticAnalysis.h
+ /home/compiler39/compiler/src/symbolTable.h
+ /home/compiler39/compiler/src/utils.h
 CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o
  ../dependencies/antlr4-runtime/src/ANTLRErrorListener.h
  ../dependencies/antlr4-runtime/src/ANTLRErrorStrategy.h
@@ -966,3 +968,9 @@ CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o
  /home/compiler39/compiler/grammar/CACTParser.h
  /home/compiler39/compiler/src/semanticAnalysis.cpp
  /home/compiler39/compiler/src/semanticAnalysis.h
+ /home/compiler39/compiler/src/symbolTable.h
+ /home/compiler39/compiler/src/utils.h
+CMakeFiles/compiler.dir/src/symbolTable.cpp.o
+ /home/compiler39/compiler/src/symbolTable.cpp
+ /home/compiler39/compiler/src/symbolTable.h
+ /home/compiler39/compiler/src/utils.h

@@ -304,6 +304,33 @@ src/semanticAnalysis.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.s
 .PHONY : src/semanticAnalysis.cpp.s
 
+src/symbolTable.o: src/symbolTable.cpp.o
+
+.PHONY : src/symbolTable.o
+
+# target to build an object file
+src/symbolTable.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/symbolTable.cpp.o
+.PHONY : src/symbolTable.cpp.o
+
+src/symbolTable.i: src/symbolTable.cpp.i
+
+.PHONY : src/symbolTable.i
+
+# target to preprocess a source file
+src/symbolTable.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/symbolTable.cpp.i
+.PHONY : src/symbolTable.cpp.i
+
+src/symbolTable.s: src/symbolTable.cpp.s
+
+.PHONY : src/symbolTable.s
+
+# target to generate assembly for a file
+src/symbolTable.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/symbolTable.cpp.s
+.PHONY : src/symbolTable.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -331,6 +358,9 @@ help:
 	@echo "... src/semanticAnalysis.o"
 	@echo "... src/semanticAnalysis.i"
 	@echo "... src/semanticAnalysis.s"
+	@echo "... src/symbolTable.o"
+	@echo "... src/symbolTable.i"
+	@echo "... src/symbolTable.s"
 .PHONY : help
 
 

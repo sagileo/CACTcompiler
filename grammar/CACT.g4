@@ -25,6 +25,9 @@ constDecl
     ;
 
 bType
+	locals[
+		int btype
+	]
     : 'int'
     | 'bool'
     | 'float'
@@ -32,12 +35,17 @@ bType
     ;
 
 constDef
-    : Ident ('[' IntConst ']')*'=' constInitVal
+	locals[
+		int btype,
+		int array_len
+	]
+    : Ident ('[' IntConst ']')?'=' constInitVal
     ;
 
 constInitVal
     locals[
-        int basic_or_array_and_type
+		int btype,
+        int array_len
     ]
     : constExp                                             
     | '{' (constExp (',' constExp)* )? '}'
@@ -60,6 +68,10 @@ varDecl__
     ; */
 
 varDef
+	locals[
+		int btype,
+		int array_len
+	]
     : Ident ('[' IntConst ']')? ('=' constInitVal)?
     ;
 
@@ -67,6 +79,9 @@ funcDef
     : funcType Ident '(' (funcFParams)? ')' block;
 
 funcType
+    locals[
+        int ret_type
+    ]
     : 'void'
     | 'int'
     | 'float'
@@ -79,19 +94,34 @@ funcFParams
     ;
 
 funcFParam
+    locals[
+        int btype
+    ]
     : bType Ident ('['']')?
     ;
 
 block
+	locals[
+		int in_loop,
+		int ret_type
+	]
     : '{' (blockItem)* '}'
     ;
 
 blockItem
+	locals[
+		int in_loop,
+		int ret_type
+	]
     : decl
     | stmt
     ;
 
 stmt
+	locals[
+		int in_loop,
+		int ret_type
+	]
     : lVal '=' exp ';'
     | (exp)? ';'
     | block
@@ -103,8 +133,12 @@ stmt
     ;
 
 exp
+    locals[
+        int btype,
+        int array_len
+    ]
     : addExp
-    | BoolConst
+    | boolConst
     ;
 
 cond
@@ -112,10 +146,18 @@ cond
     ;
 
 lVal
+    locals[
+        int btype,
+        int array_len,
+    ]
     : Ident ('[' exp ']')?
     ;
 
 primaryExp
+    locals[
+        int btype,
+        int array_len,
+    ]
     : '(' exp ')'
     | lVal
     | number
@@ -134,7 +176,7 @@ primaryExp
 
 number
     locals[
-        int basic_or_array_and_type,
+        int btype
     ]
     : IntConst
     | SmallConst
@@ -143,6 +185,10 @@ number
     ;
 
 unaryExp
+    locals[
+        int btype,
+        int array_len
+    ]
     : primaryExp
     | Ident '(' funcRParams? ')'
     | unaryOp unaryExp
@@ -159,43 +205,72 @@ funcRParams
     ;
 
 mulExp
+	locals[
+        int btype,
+        int array_len
+    ]
     : unaryExp
     | mulExp ('*' | '/' | '%') unaryExp
     ;
 
 addExp
+	locals[
+        int btype,
+        int array_len
+    ]
     : mulExp
     | addExp ('+' | '-') mulExp
     ;
 
 relExp
+    locals[
+        int btype,
+    ]
     : addExp
     | relExp ('<' | '>' | '>=' | '<=') addExp
-    | BoolConst
+    | boolConst
     ;
 
 eqExp
+    locals[
+        int btype,
+    ]
     : relExp
     | eqExp ('==' | '!=') relExp
     ;
 
 lAndExp
+    locals[
+        int btype,
+    ]
     : eqExp
     | lAndExp '&&' eqExp
     ;
 
 lOrExp
+    locals[
+        int btype,
+    ]
     : lAndExp
     | lOrExp '||' lAndExp
     ;
 
+// constExp
+//     locals[
+//         int basic_or_array_and_type,
+//     ]
+//     : number            #constExpNumber
+//     | BoolConst         #constExpBoolConst
+//     ;
 constExp
     locals[
-        int basic_or_array_and_type,
+        int btype,
     ]
     : number            #constExpNumber
-    | BoolConst         #constExpBoolConst
+    | boolConst         #constExpBoolConst
     ;
+
+boolConst : 'true' | 'false';
 
 
 /********** Lexer **********/
@@ -232,7 +307,6 @@ IntConst
     | HexadecimalConst
     ;
 
-BoolConst : 'true' | 'false';
 
 SmallConst
     : DecimalConst? '.' Digit*

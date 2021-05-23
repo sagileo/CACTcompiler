@@ -1190,7 +1190,27 @@ antlr4-runtime.h
 semanticAnalysis.h
 /home/compiler39/compiler/src/semanticAnalysis.h
 
+/home/compiler39/compiler/src/semanticAnalysis.cpp
+semanticAnalysis.h
+/home/compiler39/compiler/src/semanticAnalysis.h
+
 /home/compiler39/compiler/src/semanticAnalysis.h
 ../grammar/CACTBaseListener.h
 /home/compiler39/compiler/grammar/CACTBaseListener.h
+./symbolTable.h
+/home/compiler39/compiler/src/symbolTable.h
+
+/home/compiler39/compiler/src/symbolTable.h
+./utils.h
+/home/compiler39/compiler/src/utils.h
+
+/home/compiler39/compiler/src/utils.h
+vector
+-
+map
+-
+string
+-
+iostream
+-
 

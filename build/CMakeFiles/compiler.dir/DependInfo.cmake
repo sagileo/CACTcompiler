@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/compiler39/compiler/grammar/CACTParser.cpp" "/home/compiler39/compiler/build/CMakeFiles/compiler.dir/grammar/CACTParser.cpp.o"
   "/home/compiler39/compiler/src/main.cpp" "/home/compiler39/compiler/build/CMakeFiles/compiler.dir/src/main.cpp.o"
   "/home/compiler39/compiler/src/semanticAnalysis.cpp" "/home/compiler39/compiler/build/CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o"
+  "/home/compiler39/compiler/src/symbolTable.cpp" "/home/compiler39/compiler/build/CMakeFiles/compiler.dir/src/symbolTable.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

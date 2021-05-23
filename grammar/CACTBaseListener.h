@@ -113,6 +113,9 @@ public:
   virtual void enterConstExpBoolConst(CACTParser::ConstExpBoolConstContext * /*ctx*/) override { }
   virtual void exitConstExpBoolConst(CACTParser::ConstExpBoolConstContext * /*ctx*/) override { }
 
+  virtual void enterBoolConst(CACTParser::BoolConstContext * /*ctx*/) override { }
+  virtual void exitBoolConst(CACTParser::BoolConstContext * /*ctx*/) override { }
+
 
   virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }
   virtual void exitEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }

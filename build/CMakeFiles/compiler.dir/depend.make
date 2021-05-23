@@ -803,6 +803,8 @@ CMakeFiles/compiler.dir/src/main.cpp.o: ../grammar/CACTListener.h
 CMakeFiles/compiler.dir/src/main.cpp.o: ../grammar/CACTParser.h
 CMakeFiles/compiler.dir/src/main.cpp.o: ../src/main.cpp
 CMakeFiles/compiler.dir/src/main.cpp.o: ../src/semanticAnalysis.h
+CMakeFiles/compiler.dir/src/main.cpp.o: ../src/symbolTable.h
+CMakeFiles/compiler.dir/src/main.cpp.o: ../src/utils.h
 
 CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o: ../dependencies/antlr4-runtime/src/ANTLRErrorListener.h
 CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o: ../dependencies/antlr4-runtime/src/ANTLRErrorStrategy.h
@@ -965,4 +967,10 @@ CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o: ../grammar/CACTListener.h
 CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o: ../grammar/CACTParser.h
 CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o: ../src/semanticAnalysis.cpp
 CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o: ../src/semanticAnalysis.h
+CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o: ../src/symbolTable.h
+CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o: ../src/utils.h
+
+CMakeFiles/compiler.dir/src/symbolTable.cpp.o: ../src/symbolTable.cpp
+CMakeFiles/compiler.dir/src/symbolTable.cpp.o: ../src/symbolTable.h
+CMakeFiles/compiler.dir/src/symbolTable.cpp.o: ../src/utils.h
 

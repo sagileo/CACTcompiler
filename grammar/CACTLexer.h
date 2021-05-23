@@ -21,9 +21,9 @@ public:
     T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, T__18 = 19, T__19 = 20, 
     T__20 = 21, T__21 = 22, T__22 = 23, T__23 = 24, T__24 = 25, T__25 = 26, 
     T__26 = 27, T__27 = 28, T__28 = 29, T__29 = 30, T__30 = 31, T__31 = 32, 
-    T__32 = 33, T__33 = 34, T__34 = 35, Ident = 36, FloatSign = 37, IntConst = 38, 
-    BoolConst = 39, SmallConst = 40, ScienceConst = 41, DoubleConst = 42, 
-    FloatConst = 43, NewLine = 44, WhiteSpace = 45, BlockComment = 46, LineComment = 47
+    T__32 = 33, T__33 = 34, T__34 = 35, T__35 = 36, T__36 = 37, Ident = 38, 
+    FloatSign = 39, IntConst = 40, SmallConst = 41, ScienceConst = 42, DoubleConst = 43, 
+    FloatConst = 44, NewLine = 45, WhiteSpace = 46, BlockComment = 47, LineComment = 48
   };
 
   CACTLexer(antlr4::CharStream *input);

@@ -111,6 +111,9 @@ public:
   virtual void enterConstExpBoolConst(CACTParser::ConstExpBoolConstContext *ctx) = 0;
   virtual void exitConstExpBoolConst(CACTParser::ConstExpBoolConstContext *ctx) = 0;
 
+  virtual void enterBoolConst(CACTParser::BoolConstContext *ctx) = 0;
+  virtual void exitBoolConst(CACTParser::BoolConstContext *ctx) = 0;
+
 
 };
 
