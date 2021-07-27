@@ -1,6 +1,7 @@
 
     #include <vector>
     #include <string>
+	#include "../src/threeAdressCode.h"
 
 
 // Generated from /home/compiler39/compiler/grammar/CACT.g4 by ANTLR 4.8

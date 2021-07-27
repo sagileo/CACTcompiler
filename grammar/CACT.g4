@@ -8,19 +8,29 @@ options {
 @header {
     #include <vector>
     #include <string>
+	#include "../src/threeAdressCode.h"
 }
 
 /********** Parser **********/
 compUnit
+	locals[
+		threeAdressCode code,
+	]
     : (funcDef | decl)+ EOF
     ;
 
 decl
+	locals[
+		threeAdressCode code,
+	]
     : constDecl
     | varDecl
     ;
 
 constDecl
+	locals[
+		threeAdressCode code,
+	]
     : 'const' bType constDef (',' constDef)* ';'
     ;
 
@@ -37,7 +47,8 @@ bType
 constDef
 	locals[
 		int btype,
-		int array_len
+		int array_len,
+		threeAdressCode code,
 	]
     : Ident ('[' IntConst ']')?'=' constInitVal
     ;
@@ -45,37 +56,33 @@ constDef
 constInitVal
     locals[
 		int btype,
-        int array_len
+        int array_len,
+		char ** val
     ]
     : constExp                                             
     | '{' (constExp (',' constExp)* )? '}'
     ;
 
 varDecl
+	locals[
+		threeAdressCode code,
+	]
     : bType varDef (',' varDef)* ';'
     ;
-
-/* varDecl
-    : bType varDecl_ ';'
-    ;
-
-varDecl_
-    : varDef varDecl__
-    ;
-
-varDecl__
-    : (',' varDef varDecl__)?
-    ; */
 
 varDef
 	locals[
 		int btype,
-		int array_len
+		int array_len,
+		threeAdressCode code,
 	]
     : Ident ('[' IntConst ']')? ('=' constInitVal)?
     ;
 
 funcDef
+	locals[
+		threeAdressCode code,
+	]
     : funcType Ident '(' (funcFParams)? ')' block;
 
 funcType
@@ -103,7 +110,10 @@ funcFParam
 block
 	locals[
 		int in_loop,
-		int ret_type
+		int ret_type,
+		std::string breaknext,
+		std::string contnext,
+		threeAdressCode code,
 	]
     : '{' (blockItem)* '}'
     ;
@@ -111,7 +121,10 @@ block
 blockItem
 	locals[
 		int in_loop,
-		int ret_type
+		int ret_type,
+		std::string breaknext,
+		std::string contnext,
+		threeAdressCode code,
 	]
     : decl
     | stmt
@@ -120,7 +133,11 @@ blockItem
 stmt
 	locals[
 		int in_loop,
-		int ret_type
+		int ret_type,
+		std::string next,
+		std::string breaknext,
+		std::string contnext,
+		threeAdressCode code,
 	]
     : lVal '=' exp ';'
     | (exp)? ';'
@@ -135,13 +152,21 @@ stmt
 exp
     locals[
         int btype,
-        int array_len
+        int array_len,
+		std::string temp,
+		threeAdressCode code,
     ]
     : addExp
     | boolConst
     ;
 
 cond
+	locals[
+		std::string t,
+		std::string f,
+		threeAdressCode code,
+		std::string temp,
+	]
     : lOrExp
     ;
 
@@ -149,6 +174,8 @@ lVal
     locals[
         int btype,
         int array_len,
+		std::string temp,
+		threeAdressCode code,
     ]
     : Ident ('[' exp ']')?
     ;
@@ -157,37 +184,32 @@ primaryExp
     locals[
         int btype,
         int array_len,
+		std::string temp,
+		threeAdressCode code,
     ]
     : '(' exp ')'
     | lVal
     | number
     ;
 
-/* number
-    locals[
-        int basic_or_array_and_type,
-    ]
-    : IntConst
-    | SmallConst 
-    | SmallConst FloatSign
-    | ScienceConst
-    | ScienceConst FloatSign
-    ; */
-
 number
     locals[
-        int btype
+        int btype,
+		char * val,
+		threeAdressCode code,
     ]
-    : IntConst
-    | SmallConst
-    | ScienceConst
-    | FloatConst
+    : IntConst		// BTYPE_INT
+    | SmallConst	// BTYPE_DOUBLE
+    | ScienceConst	// BTYPE_DOUBLE
+    | FloatConst	// BTYPE_FLOAT
     ;
 
 unaryExp
     locals[
         int btype,
-        int array_len
+        int array_len,
+		std::string temp,
+		threeAdressCode code,
     ]
     : primaryExp
     | Ident '(' funcRParams? ')'
@@ -201,13 +223,19 @@ unaryOp
     ;
 
 funcRParams
+	locals[
+		std::string temp,
+		threeAdressCode code,
+	]
     : exp (',' exp)*
     ;
 
 mulExp
 	locals[
         int btype,
-        int array_len
+        int array_len,
+		std::string temp,
+		threeAdressCode code,
     ]
     : unaryExp
     | mulExp ('*' | '/' | '%') unaryExp
@@ -216,7 +244,9 @@ mulExp
 addExp
 	locals[
         int btype,
-        int array_len
+        int array_len,
+		std::string temp,
+		threeAdressCode code,
     ]
     : mulExp
     | addExp ('+' | '-') mulExp
@@ -225,6 +255,10 @@ addExp
 relExp
     locals[
         int btype,
+		threeAdressCode code,
+		std::string temp,
+		std::string t,
+		std::string f,
     ]
     : addExp
     | relExp ('<' | '>' | '>=' | '<=') addExp
@@ -234,6 +268,10 @@ relExp
 eqExp
     locals[
         int btype,
+		threeAdressCode code,
+		std::string temp,
+		std::string t,
+		std::string f,
     ]
     : relExp
     | eqExp ('==' | '!=') relExp
@@ -242,6 +280,10 @@ eqExp
 lAndExp
     locals[
         int btype,
+		threeAdressCode code,
+		std::string temp,
+		std::string t,
+		std::string f,
     ]
     : eqExp
     | lAndExp '&&' eqExp
@@ -250,27 +292,33 @@ lAndExp
 lOrExp
     locals[
         int btype,
+		threeAdressCode code,
+		std::string temp,
+		std::string t,
+		std::string f,
     ]
     : lAndExp
     | lOrExp '||' lAndExp
     ;
 
-// constExp
-//     locals[
-//         int basic_or_array_and_type,
-//     ]
-//     : number            #constExpNumber
-//     | BoolConst         #constExpBoolConst
-//     ;
 constExp
     locals[
         int btype,
+		char * val,
+		std::string temp,
+		threeAdressCode code,
     ]
     : number            #constExpNumber
     | boolConst         #constExpBoolConst
     ;
 
-boolConst : 'true' | 'false';
+boolConst
+	locals[
+		char * val,
+		std::string temp,
+		threeAdressCode code,
+	]
+	: 'true' | 'false';
 
 
 /********** Lexer **********/

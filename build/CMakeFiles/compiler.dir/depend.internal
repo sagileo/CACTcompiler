@@ -162,6 +162,9 @@ CMakeFiles/compiler.dir/grammar/CACTBaseListener.cpp.o
  /home/compiler39/compiler/grammar/CACTBaseListener.h
  /home/compiler39/compiler/grammar/CACTListener.h
  /home/compiler39/compiler/grammar/CACTParser.h
+ /home/compiler39/compiler/src/symbolTable.h
+ /home/compiler39/compiler/src/threeAdressCode.h
+ /home/compiler39/compiler/src/utils.h
 CMakeFiles/compiler.dir/grammar/CACTLexer.cpp.o
  ../dependencies/antlr4-runtime/src/ANTLRErrorListener.h
  ../dependencies/antlr4-runtime/src/ANTLRErrorStrategy.h
@@ -321,6 +324,9 @@ CMakeFiles/compiler.dir/grammar/CACTLexer.cpp.o
  ../dependencies/antlr4-runtime/src/tree/xpath/XPathWildcardElement.h
  /home/compiler39/compiler/grammar/CACTLexer.cpp
  /home/compiler39/compiler/grammar/CACTLexer.h
+ /home/compiler39/compiler/src/symbolTable.h
+ /home/compiler39/compiler/src/threeAdressCode.h
+ /home/compiler39/compiler/src/utils.h
 CMakeFiles/compiler.dir/grammar/CACTListener.cpp.o
  ../dependencies/antlr4-runtime/src/ANTLRErrorListener.h
  ../dependencies/antlr4-runtime/src/ANTLRErrorStrategy.h
@@ -481,6 +487,9 @@ CMakeFiles/compiler.dir/grammar/CACTListener.cpp.o
  /home/compiler39/compiler/grammar/CACTListener.cpp
  /home/compiler39/compiler/grammar/CACTListener.h
  /home/compiler39/compiler/grammar/CACTParser.h
+ /home/compiler39/compiler/src/symbolTable.h
+ /home/compiler39/compiler/src/threeAdressCode.h
+ /home/compiler39/compiler/src/utils.h
 CMakeFiles/compiler.dir/grammar/CACTParser.cpp.o
  ../dependencies/antlr4-runtime/src/ANTLRErrorListener.h
  ../dependencies/antlr4-runtime/src/ANTLRErrorStrategy.h
@@ -641,6 +650,9 @@ CMakeFiles/compiler.dir/grammar/CACTParser.cpp.o
  /home/compiler39/compiler/grammar/CACTListener.h
  /home/compiler39/compiler/grammar/CACTParser.cpp
  /home/compiler39/compiler/grammar/CACTParser.h
+ /home/compiler39/compiler/src/symbolTable.h
+ /home/compiler39/compiler/src/threeAdressCode.h
+ /home/compiler39/compiler/src/utils.h
 CMakeFiles/compiler.dir/src/main.cpp.o
  ../dependencies/antlr4-runtime/src/ANTLRErrorListener.h
  ../dependencies/antlr4-runtime/src/ANTLRErrorStrategy.h
@@ -805,6 +817,7 @@ CMakeFiles/compiler.dir/src/main.cpp.o
  /home/compiler39/compiler/src/main.cpp
  /home/compiler39/compiler/src/semanticAnalysis.h
  /home/compiler39/compiler/src/symbolTable.h
+ /home/compiler39/compiler/src/threeAdressCode.h
  /home/compiler39/compiler/src/utils.h
 CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o
  ../dependencies/antlr4-runtime/src/ANTLRErrorListener.h
@@ -969,8 +982,17 @@ CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o
  /home/compiler39/compiler/src/semanticAnalysis.cpp
  /home/compiler39/compiler/src/semanticAnalysis.h
  /home/compiler39/compiler/src/symbolTable.h
+ /home/compiler39/compiler/src/threeAdressCode.h
  /home/compiler39/compiler/src/utils.h
 CMakeFiles/compiler.dir/src/symbolTable.cpp.o
  /home/compiler39/compiler/src/symbolTable.cpp
  /home/compiler39/compiler/src/symbolTable.h
+ /home/compiler39/compiler/src/utils.h
+CMakeFiles/compiler.dir/src/threeAdressCode.cpp.o
+ /home/compiler39/compiler/src/symbolTable.h
+ /home/compiler39/compiler/src/threeAdressCode.cpp
+ /home/compiler39/compiler/src/threeAdressCode.h
+ /home/compiler39/compiler/src/utils.h
+CMakeFiles/compiler.dir/src/utils.cpp.o
+ /home/compiler39/compiler/src/utils.cpp
  /home/compiler39/compiler/src/utils.h

@@ -1,6 +1,7 @@
 
     #include <vector>
     #include <string>
+	#include "../src/threeAdressCode.h"
 
 
 // Generated from CACT.g4 by ANTLR 4.8
@@ -2523,6 +2524,9 @@ size_t CACTParser::ConstExpContext::getRuleIndex() const {
 void CACTParser::ConstExpContext::copyFrom(ConstExpContext *ctx) {
   ParserRuleContext::copyFrom(ctx);
   this->btype = ctx->btype;
+  this->val = ctx->val;
+  this->temp = ctx->temp;
+  this->code = ctx->code;
 }
 
 //----------------- ConstExpBoolConstContext ------------------------------------------------------------------

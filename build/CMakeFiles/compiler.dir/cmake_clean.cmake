@@ -6,6 +6,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/compiler.dir/src/main.cpp.o"
   "CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o"
   "CMakeFiles/compiler.dir/src/symbolTable.cpp.o"
+  "CMakeFiles/compiler.dir/src/threeAdressCode.cpp.o"
+  "CMakeFiles/compiler.dir/src/utils.cpp.o"
   "compiler"
   "compiler.pdb"
 )

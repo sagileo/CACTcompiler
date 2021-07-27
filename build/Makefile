@@ -331,6 +331,60 @@ src/symbolTable.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/symbolTable.cpp.s
 .PHONY : src/symbolTable.cpp.s
 
+src/threeAdressCode.o: src/threeAdressCode.cpp.o
+
+.PHONY : src/threeAdressCode.o
+
+# target to build an object file
+src/threeAdressCode.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/threeAdressCode.cpp.o
+.PHONY : src/threeAdressCode.cpp.o
+
+src/threeAdressCode.i: src/threeAdressCode.cpp.i
+
+.PHONY : src/threeAdressCode.i
+
+# target to preprocess a source file
+src/threeAdressCode.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/threeAdressCode.cpp.i
+.PHONY : src/threeAdressCode.cpp.i
+
+src/threeAdressCode.s: src/threeAdressCode.cpp.s
+
+.PHONY : src/threeAdressCode.s
+
+# target to generate assembly for a file
+src/threeAdressCode.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/threeAdressCode.cpp.s
+.PHONY : src/threeAdressCode.cpp.s
+
+src/utils.o: src/utils.cpp.o
+
+.PHONY : src/utils.o
+
+# target to build an object file
+src/utils.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/utils.cpp.o
+.PHONY : src/utils.cpp.o
+
+src/utils.i: src/utils.cpp.i
+
+.PHONY : src/utils.i
+
+# target to preprocess a source file
+src/utils.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/utils.cpp.i
+.PHONY : src/utils.cpp.i
+
+src/utils.s: src/utils.cpp.s
+
+.PHONY : src/utils.s
+
+# target to generate assembly for a file
+src/utils.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/utils.cpp.s
+.PHONY : src/utils.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -361,6 +415,12 @@ help:
 	@echo "... src/symbolTable.o"
 	@echo "... src/symbolTable.i"
 	@echo "... src/symbolTable.s"
+	@echo "... src/threeAdressCode.o"
+	@echo "... src/threeAdressCode.i"
+	@echo "... src/threeAdressCode.s"
+	@echo "... src/utils.o"
+	@echo "... src/utils.i"
+	@echo "... src/utils.s"
 .PHONY : help
 
 

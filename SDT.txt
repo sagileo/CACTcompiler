@@ -1,0 +1,398 @@
+grammar CACT;
+
+// The language generated
+options {
+    language = Cpp;
+}
+
+@header {
+    #include <vector>
+    #include <string>
+}
+
+/********** Parser **********/
+compUnit
+    : (funcDef | decl)+ EOF	
+    ;
+
+decl
+    : constDecl
+    | varDecl
+    ;
+
+constDecl
+    : 'const' bType constDef (',' constDef)* ';'
+    ;
+
+bType
+	locals[
+		int btype
+	]
+    : 'int'
+    | 'bool'
+    | 'float'
+    | 'double'
+    ;
+
+constDef
+	locals[
+		int btype,
+		int array_len
+	]
+    : Ident '=' constInitVal		{ gen(top.get(Ident.lexeme) '=' constInitVal.val[0]) }
+    | Ident'[' IntConst ']' '=' constInitVal	{ for(int i = 0; i < array_len; i++) gen((top.get((Ident.lexeme))[i]) '=' constInitVal.val[i]) }
+    ;
+
+constInitVal
+    locals[
+		int btype,
+        int array_len
+    ]
+    : constExp                       { constInitVal.val[0] = constExp.val; }
+    | '{' (constExp (',' constExp)* )? '}'		{ for(int i = 0; i < array_len; i++) constInitVal.val[i] = constExp_i.val }
+    ;
+
+varDecl
+    : bType varDef (',' varDef)* ';'
+    ;
+
+varDef
+	locals[
+		int btype,
+		int array_len
+	]
+    : Ident
+    | Ident '=' constInitVal	{ gen(top.get(Ident.lexeme) '=' constInitVal.val[0]) }
+    | Ident '[' IntConst ']'
+    | Ident '[' IntConst ']' '=' constInitVal		{ for(int i = 0; i < array_len; i++) gen((top.get((Ident.lexeme))[i]) '=' constInitVal.val[i]) }
+    ;
+
+funcDef
+    : funcType Ident '(' (funcFParams)? ')' block;		{ gen(top.get(funcDef.lexeme) ':') }
+
+funcType
+    locals[
+        int ret_type
+    ]
+    : 'void'
+    | 'int'
+    | 'float'
+    | 'double'
+    | 'bool'
+    ;
+
+funcFParams
+    : funcFParam (','funcFParam)*	
+    ;
+
+funcFParam
+    locals[
+        int btype
+    ]
+    : bType Ident ('['']')?		
+    ;
+
+block
+	locals[
+		int in_loop,
+		int ret_type
+	]
+    : '{' (blockItem)* '}'
+    ;
+
+blockItem
+	locals[
+		int in_loop,
+		int ret_type
+	]
+    : decl
+    | stmt
+    ;
+
+stmt
+	locals[
+		int in_loop,
+		int ret_type
+	]
+    : lVal '=' exp ';'		{ gen(top.get(lVal.lexeme) '=' exp.addr); }
+    | (exp)? ';'			
+    | block
+    | 'if' '(' 		{ stmt.next = newlabel(); }
+				cond ')' stmt 'else' stmt	{ cond.true = newlabel();
+											  cond.false = newlabel();
+											  stmt_1.next = stmt_2.next = stmt.next;
+											  stmt.code = cond.code || label(cond.true) || stmt_1.code || gen('goto' stmt.next) || label(cond.false) || stmt_2.code || label(stmt.next);
+											  gen(stmt.code);
+											}
+    | 'if' '(' 		{ stmt.next = newlabel(); }
+				cond ')' stmt		{ cond.true = newlabel();
+									  cond.false = stmt_1.next = stmt.next;
+									  stmt.code = cond.code || label(cond.true) || stmt_1.code || label(stmt.next);
+									  gen(stmt.code);
+									}
+    | 'while' '(' { stmt.next = newlabel(); }
+					cond ')' stmt		{	begin = newlabel();
+										cond.true = newlabel();
+										cond.false = stmt.next;
+										stmt_1.next = begin;
+										stmt.code = label(begin) || cond.code || label(cond.true) || stmt_1.code || gen('goto' begin) || label(stmt.next);
+										gen(stmt.code);
+									}
+    | 'break' ';'				{ gen('goto' .next); }
+    | 'continue' ';'			{  }
+    | 'return' exp? ';'			{ gen('return' exp.val); }
+    ;
+
+exp
+    locals[
+        int btype,
+        int array_len,
+		std::string temp
+    ]
+    : addExp
+    | boolConst
+    ;
+
+cond
+    : lOrExp
+    ;
+
+lVal
+    locals[
+        int btype,
+        int array_len,
+    ]
+    : Ident ('[' exp ']')?
+    ;
+
+primaryExp
+    locals[
+        int btype,
+        int array_len,
+		std::string temp
+    ]
+    : '(' exp ')'
+    | lVal
+    | number
+    ;
+
+/* number
+    locals[
+        int basic_or_array_and_type,
+    ]
+    : IntConst
+    | SmallConst 
+    | SmallConst FloatSign
+    | ScienceConst
+    | ScienceConst FloatSign
+    ; */
+
+number
+    locals[
+        int btype
+    ]
+    : IntConst
+    | SmallConst
+    | ScienceConst
+    | FloatConst
+    ;
+
+unaryExp
+    locals[
+        int btype,
+        int array_len,
+		std::string temp
+    ]
+    : primaryExp
+    | Ident '(' funcRParams? ')'
+    | unaryOp unaryExp
+    ;
+
+unaryOp
+    : '+'
+    | '-'
+    | '!'
+    ;
+
+funcRParams
+    : exp (',' exp)*
+    ;
+
+mulExp
+	locals[
+        int btype,
+        int array_len,
+		std::string temp
+    ]
+    : unaryExp
+    | mulExp ('*' | '/' | '%') unaryExp
+    ;
+
+addExp
+	locals[
+        int btype,
+        int array_len,
+		std::string temp
+    ]
+    : mulExp
+    | addExp ('+' | '-') mulExp
+    ;
+
+relExp
+    locals[
+        int btype,
+    ]
+    : addExp
+    | relExp ('<' | '>' | '>=' | '<=') addExp
+    | boolConst
+    ;
+
+eqExp
+    locals[
+        int btype,
+    ]
+    : relExp
+    | eqExp ('==' | '!=') relExp
+    ;
+
+lAndExp
+    locals[
+        int btype,
+    ]
+    : eqExp
+    | lAndExp '&&' eqExp
+    ;
+
+lOrExp
+    locals[
+        int btype,
+    ]
+    : lAndExp
+    | lOrExp '||' lAndExp
+    ;
+
+// constExp
+//     locals[
+//         int basic_or_array_and_type,
+//     ]
+//     : number            #constExpNumber
+//     | BoolConst         #constExpBoolConst
+//     ;
+constExp
+    locals[
+        int btype,
+    ]
+    : number            #constExpNumber		{ constExp.val = number.val; }
+    | boolConst         #constExpBoolConst	{ constExp.val = boolConst.val; }
+    ;
+
+boolConst : 'true' | 'false';
+
+
+/********** Lexer **********/
+Ident
+    : IdentNondigit [a-zA-Z_0-9]*
+    ;
+
+/* fragment
+IdentNondigit
+    : [a-eA-E_]
+    | [g-zG-Z_]
+    | FloatSign
+    ; */
+
+fragment
+IdentNondigit
+    : [a-eA-Eg-zG-Z_]
+    | FloatSign
+    ;
+
+FloatSign
+    : 'f' 
+    | 'F'
+    ;
+
+fragment
+Digit
+    : [0-9]
+    ;
+
+IntConst
+    : DecimalConst 
+    | OctalConst
+    | HexadecimalConst
+    ;
+
+
+SmallConst
+    : DecimalConst? '.' Digit*
+    ;
+
+ScienceConst
+    : (SmallConst | DecimalConst) ('e' | 'E') ('+' | '-')? DecimalConst
+    ;
+
+DoubleConst
+    : SmallConst | ScienceConst
+    ;
+
+FloatConst
+    : DoubleConst ('f' | 'F')
+    ;
+
+fragment
+DecimalConst
+    : '0'
+    | NonzeroDigit Digit*
+    ;
+
+fragment
+OctalConst
+    : '0' OctalDigit+
+    ;
+
+fragment
+HexadecimalConst
+    : HexadecimalPrefix HexadecimalDigit+
+    ;
+
+fragment
+NonzeroDigit
+    : [1-9]
+    ;
+
+fragment
+OctalDigit
+    : [0-7]
+    ;
+
+fragment
+HexadecimalPrefix
+    : '0x'
+    | '0X'
+    ;
+
+fragment
+HexadecimalDigit
+    : [0-9a-fA-F]
+    ;
+
+NewLine
+    : ('\r' '\n'? | '\n') 
+      -> skip
+    ;
+
+WhiteSpace
+    : [ \t]+ 
+      -> skip
+    ;
+
+BlockComment
+    : '/*' .*? '*/'
+      -> skip
+    ;
+
+LineComment
+    : '//' ~[\r\n]*
+      -> skip
+    ;

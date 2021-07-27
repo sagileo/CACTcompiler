@@ -1,6 +1,7 @@
 
     #include <vector>
     #include <string>
+	#include "../src/threeAdressCode.h"
 
 
 // Generated from CACT.g4 by ANTLR 4.8
@@ -81,6 +82,7 @@ public:
 
   class  CompUnitContext : public antlr4::ParserRuleContext {
   public:
+    threeAdressCode code;
     CompUnitContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *EOF();
@@ -98,6 +100,7 @@ public:
 
   class  DeclContext : public antlr4::ParserRuleContext {
   public:
+    threeAdressCode code;
     DeclContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ConstDeclContext *constDecl();
@@ -112,6 +115,7 @@ public:
 
   class  ConstDeclContext : public antlr4::ParserRuleContext {
   public:
+    threeAdressCode code;
     ConstDeclContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     BTypeContext *bType();
@@ -142,6 +146,7 @@ public:
   public:
     int btype;
     int array_len;
+    threeAdressCode code;
     ConstDefContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *Ident();
@@ -159,6 +164,7 @@ public:
   public:
     int btype;
     int array_len;
+    char ** val;
     ConstInitValContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<ConstExpContext *> constExp();
@@ -173,6 +179,7 @@ public:
 
   class  VarDeclContext : public antlr4::ParserRuleContext {
   public:
+    threeAdressCode code;
     VarDeclContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     BTypeContext *bType();
@@ -190,6 +197,7 @@ public:
   public:
     int btype;
     int array_len;
+    threeAdressCode code;
     VarDefContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *Ident();
@@ -205,6 +213,7 @@ public:
 
   class  FuncDefContext : public antlr4::ParserRuleContext {
   public:
+    threeAdressCode code;
     FuncDefContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     FuncTypeContext *funcType();
@@ -265,6 +274,9 @@ public:
   public:
     int in_loop;
     int ret_type;
+    std::string breaknext;
+    std::string contnext;
+    threeAdressCode code;
     BlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<BlockItemContext *> blockItem();
@@ -281,6 +293,9 @@ public:
   public:
     int in_loop;
     int ret_type;
+    std::string breaknext;
+    std::string contnext;
+    threeAdressCode code;
     BlockItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     DeclContext *decl();
@@ -297,6 +312,10 @@ public:
   public:
     int in_loop;
     int ret_type;
+    std::string next;
+    std::string breaknext;
+    std::string contnext;
+    threeAdressCode code;
     StmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     LValContext *lVal();
@@ -317,6 +336,8 @@ public:
   public:
     int btype;
     int array_len;
+    std::string temp;
+    threeAdressCode code;
     ExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     AddExpContext *addExp();
@@ -331,6 +352,10 @@ public:
 
   class  CondContext : public antlr4::ParserRuleContext {
   public:
+    std::string t;
+    std::string f;
+    threeAdressCode code;
+    std::string temp;
     CondContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     LOrExpContext *lOrExp();
@@ -346,6 +371,8 @@ public:
   public:
     int btype;
     int array_len;
+    std::string temp;
+    threeAdressCode code;
     LValContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *Ident();
@@ -362,6 +389,8 @@ public:
   public:
     int btype;
     int array_len;
+    std::string temp;
+    threeAdressCode code;
     PrimaryExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ExpContext *exp();
@@ -378,6 +407,8 @@ public:
   class  NumberContext : public antlr4::ParserRuleContext {
   public:
     int btype;
+    char * val;
+    threeAdressCode code;
     NumberContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *IntConst();
@@ -396,6 +427,8 @@ public:
   public:
     int btype;
     int array_len;
+    std::string temp;
+    threeAdressCode code;
     UnaryExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     PrimaryExpContext *primaryExp();
@@ -425,6 +458,8 @@ public:
 
   class  FuncRParamsContext : public antlr4::ParserRuleContext {
   public:
+    std::string temp;
+    threeAdressCode code;
     FuncRParamsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<ExpContext *> exp();
@@ -441,6 +476,8 @@ public:
   public:
     int btype;
     int array_len;
+    std::string temp;
+    threeAdressCode code;
     MulExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     UnaryExpContext *unaryExp();
@@ -457,6 +494,8 @@ public:
   public:
     int btype;
     int array_len;
+    std::string temp;
+    threeAdressCode code;
     AddExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     MulExpContext *mulExp();
@@ -472,6 +511,10 @@ public:
   class  RelExpContext : public antlr4::ParserRuleContext {
   public:
     int btype;
+    threeAdressCode code;
+    std::string temp;
+    std::string t;
+    std::string f;
     RelExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     AddExpContext *addExp();
@@ -488,6 +531,10 @@ public:
   class  EqExpContext : public antlr4::ParserRuleContext {
   public:
     int btype;
+    threeAdressCode code;
+    std::string temp;
+    std::string t;
+    std::string f;
     EqExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     RelExpContext *relExp();
@@ -503,6 +550,10 @@ public:
   class  LAndExpContext : public antlr4::ParserRuleContext {
   public:
     int btype;
+    threeAdressCode code;
+    std::string temp;
+    std::string t;
+    std::string f;
     LAndExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     EqExpContext *eqExp();
@@ -518,6 +569,10 @@ public:
   class  LOrExpContext : public antlr4::ParserRuleContext {
   public:
     int btype;
+    threeAdressCode code;
+    std::string temp;
+    std::string t;
+    std::string f;
     LOrExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     LAndExpContext *lAndExp();
@@ -533,6 +588,9 @@ public:
   class  ConstExpContext : public antlr4::ParserRuleContext {
   public:
     int btype;
+    char * val;
+    std::string temp;
+    threeAdressCode code;
     ConstExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
    
     ConstExpContext() = default;
@@ -566,6 +624,9 @@ public:
 
   class  BoolConstContext : public antlr4::ParserRuleContext {
   public:
+    char * val;
+    std::string temp;
+    threeAdressCode code;
     BoolConstContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
 

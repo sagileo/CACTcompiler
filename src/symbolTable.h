@@ -4,14 +4,14 @@
 #include "./utils.h"
 
 
-enum{
+enum btype{
     BTYPE_INT,
     BTYPE_FLOAT,
     BTYPE_DOUBLE,
     BTYPE_BOOL,
 	BTYPE_ANY
 };
-enum{
+enum functype{
     FUNC_INT,
     FUNC_FLOAT,
     FUNC_DOUBLE,
