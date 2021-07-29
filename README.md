@@ -17,6 +17,11 @@ make
 ./compiler ../samples/00_main.cact
 ```
 
-
+## Run compiler
+```shell
+./compiler ../samples_codegen/00_print_int.cact
+...
+```
+result .s files are stored in compiler/output
 
 

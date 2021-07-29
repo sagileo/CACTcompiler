@@ -1,6 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <bits/stdc++.h>
 #include <vector>
 #include <map>
 #include <string>

@@ -9,6 +9,7 @@ options {
     #include <vector>
     #include <string>
 	#include "../src/threeAdressCode.h"
+	#include "../src/genAssemble.h"
 }
 
 /********** Parser **********/
@@ -82,6 +83,7 @@ varDef
 funcDef
 	locals[
 		threeAdressCode code,
+		struct paramList * plist,
 	]
     : funcType Ident '(' (funcFParams)? ')' block;
 
@@ -97,6 +99,9 @@ funcType
     ;
 
 funcFParams
+	locals[
+		struct paramList * plist,
+	]
     : funcFParam (','funcFParam)*
     ;
 

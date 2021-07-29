@@ -1,6 +1,8 @@
 #include "./threeAdressCode.h"
 
 threeAdressCode TAC;
+std::vector< std::pair< std::string, int > > array_vector;
+std::vector< std::string > array_vector_str;
 
 std::string mynewlabel()
 {

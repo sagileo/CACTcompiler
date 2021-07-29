@@ -29,7 +29,7 @@ enum TACop
 	TACOP_WOFF,		// 双目 数组写访问 	result[arg1] = arg2 
 	TACOP_ASSIGN,	// 赋值语句			result = arg1
 	TACOP_PARAM, 	// 设置参数语句		param arg1
-	TACOP_CALL,		// 函数调用语句		call arg1
+	TACOP_CALL,		// 函数调用语句		result = call arg1(arg2) 
 	TACOP_RETURN,	// 函数返回语句		return arg1
 	TACOP_J_LT,		// 函数跳转语句		if arg1 < arg2, goto result
 	TACOP_J_LE,		// 函数跳转语句		if arg1 <= arg2, goto result
@@ -54,11 +54,11 @@ enum TACrel
 class TACoperand
 {
 	public:
-	int type;		// 类型
-	void* data;		// 数据
+	int type;			// 类型
+	void* data;			// 数据
 	std::string temp;	// 变量暂存名
-	int size;		// 类型宽度
-	bool imm;		// 是否为立即数，默认为1，变量为0
+	int size;			// 类型宽度
+	bool imm;			// 是否为立即数，默认为1，变量为0
 
 
 	TACoperand(){};
@@ -69,7 +69,7 @@ class TACoperand
 		this->imm = imm;
 		switch(type)
 		{
-			case BTYPE_BOOL: size = 1; break;
+			case BTYPE_BOOL: size = 4 ; break;
 			case BTYPE_INT: size = 4; break;
 			case BTYPE_FLOAT: size = 4; break;
 			case BTYPE_DOUBLE: size = 8; break;
@@ -304,7 +304,13 @@ class threeAdressCode
 			}
 			else if(lines[i].op == TACOP_CALL){
 				std::cout << "call" << std::endl << "\t";
+				if(lines[i].result.imm == 0){
+					printOperand(lines[i].result);
+					std::cout << " = ";
+				}
 				printOperand(lines[i].arg1);
+				std::cout << "\tn_params : ";
+				printOperand(lines[i].arg2);
 				std::cout << std::endl;
 			}
 			else if(lines[i].op == TACOP_RETURN){
@@ -373,7 +379,7 @@ class threeAdressCode
 				std::cout << std::endl;
 			}
 			else if(lines[i].op == TACOP_J){
-				std::cout << "j" << std::endl << "\tgoto";
+				std::cout << "j" << std::endl << "\tgoto ";
 				printOperand(lines[i].arg1);
 				std::cout << std::endl;
 			}
@@ -390,5 +396,7 @@ std::string mynewlabel();
 std::string mynewtemp();
 
 extern threeAdressCode TAC;
+extern std::vector< std::pair< std::string, int > > array_vector;
+extern std::vector< std::string > array_vector_str;
 
 #endif

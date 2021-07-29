@@ -2,6 +2,11 @@
 
 SymbolTable sym_table;
 
+int getNum(){
+	static int scopeNum = 1;
+	return scopeNum++;
+}
+
 VarInfo * SymbolTable::lookup_curr(const std::string &name){
     if(curr_scope == NULL){
         if(this->global_var.count(name) > 0){
@@ -105,13 +110,18 @@ void SymbolTable::addVar(std::string name, int btype, int len, int is_const){
     var->array_len = len;
     var->is_const = is_const;
     if(curr_scope != NULL){
+		var->scopeID = curr_scope->id;
         curr_scope->local_var.insert(std::pair<std::string, VarInfo>(name, *var));
     }
-    else global_var.insert(std::pair<std::string, VarInfo>(name, *var));
+    else{
+		var->scopeID = 0;
+		global_var.insert(std::pair<std::string, VarInfo>(name, *var));
+	}
 }
 
 void SymbolTable::addScope(int start_line){
     ScopeTable * scope = new ScopeTable;
+	scope->id = getNum();
     scope->curr_func = curr_scope->curr_func;
     scope->parent = curr_scope;
     scope->start_line = start_line;

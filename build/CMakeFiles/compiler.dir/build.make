@@ -128,9 +128,22 @@ CMakeFiles/compiler.dir/grammar/CACTParser.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/compiler.dir/grammar/CACTParser.cpp.s"
 	/usr/bin/g++-5 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/compiler39/compiler/grammar/CACTParser.cpp -o CMakeFiles/compiler.dir/grammar/CACTParser.cpp.s
 
+CMakeFiles/compiler.dir/src/genAssemble.cpp.o: CMakeFiles/compiler.dir/flags.make
+CMakeFiles/compiler.dir/src/genAssemble.cpp.o: ../src/genAssemble.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler39/compiler/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/compiler.dir/src/genAssemble.cpp.o"
+	/usr/bin/g++-5 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/compiler.dir/src/genAssemble.cpp.o -c /home/compiler39/compiler/src/genAssemble.cpp
+
+CMakeFiles/compiler.dir/src/genAssemble.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/compiler.dir/src/genAssemble.cpp.i"
+	/usr/bin/g++-5 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/compiler39/compiler/src/genAssemble.cpp > CMakeFiles/compiler.dir/src/genAssemble.cpp.i
+
+CMakeFiles/compiler.dir/src/genAssemble.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/compiler.dir/src/genAssemble.cpp.s"
+	/usr/bin/g++-5 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/compiler39/compiler/src/genAssemble.cpp -o CMakeFiles/compiler.dir/src/genAssemble.cpp.s
+
 CMakeFiles/compiler.dir/src/main.cpp.o: CMakeFiles/compiler.dir/flags.make
 CMakeFiles/compiler.dir/src/main.cpp.o: ../src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler39/compiler/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/compiler.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler39/compiler/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/compiler.dir/src/main.cpp.o"
 	/usr/bin/g++-5 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/compiler.dir/src/main.cpp.o -c /home/compiler39/compiler/src/main.cpp
 
 CMakeFiles/compiler.dir/src/main.cpp.i: cmake_force
@@ -143,7 +156,7 @@ CMakeFiles/compiler.dir/src/main.cpp.s: cmake_force
 
 CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o: CMakeFiles/compiler.dir/flags.make
 CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o: ../src/semanticAnalysis.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler39/compiler/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler39/compiler/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o"
 	/usr/bin/g++-5 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o -c /home/compiler39/compiler/src/semanticAnalysis.cpp
 
 CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.i: cmake_force
@@ -156,7 +169,7 @@ CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.s: cmake_force
 
 CMakeFiles/compiler.dir/src/symbolTable.cpp.o: CMakeFiles/compiler.dir/flags.make
 CMakeFiles/compiler.dir/src/symbolTable.cpp.o: ../src/symbolTable.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler39/compiler/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/compiler.dir/src/symbolTable.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler39/compiler/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/compiler.dir/src/symbolTable.cpp.o"
 	/usr/bin/g++-5 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/compiler.dir/src/symbolTable.cpp.o -c /home/compiler39/compiler/src/symbolTable.cpp
 
 CMakeFiles/compiler.dir/src/symbolTable.cpp.i: cmake_force
@@ -169,7 +182,7 @@ CMakeFiles/compiler.dir/src/symbolTable.cpp.s: cmake_force
 
 CMakeFiles/compiler.dir/src/threeAdressCode.cpp.o: CMakeFiles/compiler.dir/flags.make
 CMakeFiles/compiler.dir/src/threeAdressCode.cpp.o: ../src/threeAdressCode.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler39/compiler/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/compiler.dir/src/threeAdressCode.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler39/compiler/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/compiler.dir/src/threeAdressCode.cpp.o"
 	/usr/bin/g++-5 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/compiler.dir/src/threeAdressCode.cpp.o -c /home/compiler39/compiler/src/threeAdressCode.cpp
 
 CMakeFiles/compiler.dir/src/threeAdressCode.cpp.i: cmake_force
@@ -182,7 +195,7 @@ CMakeFiles/compiler.dir/src/threeAdressCode.cpp.s: cmake_force
 
 CMakeFiles/compiler.dir/src/utils.cpp.o: CMakeFiles/compiler.dir/flags.make
 CMakeFiles/compiler.dir/src/utils.cpp.o: ../src/utils.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler39/compiler/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/compiler.dir/src/utils.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/compiler39/compiler/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/compiler.dir/src/utils.cpp.o"
 	/usr/bin/g++-5 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/compiler.dir/src/utils.cpp.o -c /home/compiler39/compiler/src/utils.cpp
 
 CMakeFiles/compiler.dir/src/utils.cpp.i: cmake_force
@@ -199,6 +212,7 @@ compiler_OBJECTS = \
 "CMakeFiles/compiler.dir/grammar/CACTLexer.cpp.o" \
 "CMakeFiles/compiler.dir/grammar/CACTListener.cpp.o" \
 "CMakeFiles/compiler.dir/grammar/CACTParser.cpp.o" \
+"CMakeFiles/compiler.dir/src/genAssemble.cpp.o" \
 "CMakeFiles/compiler.dir/src/main.cpp.o" \
 "CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o" \
 "CMakeFiles/compiler.dir/src/symbolTable.cpp.o" \
@@ -212,6 +226,7 @@ compiler: CMakeFiles/compiler.dir/grammar/CACTBaseListener.cpp.o
 compiler: CMakeFiles/compiler.dir/grammar/CACTLexer.cpp.o
 compiler: CMakeFiles/compiler.dir/grammar/CACTListener.cpp.o
 compiler: CMakeFiles/compiler.dir/grammar/CACTParser.cpp.o
+compiler: CMakeFiles/compiler.dir/src/genAssemble.cpp.o
 compiler: CMakeFiles/compiler.dir/src/main.cpp.o
 compiler: CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o
 compiler: CMakeFiles/compiler.dir/src/symbolTable.cpp.o
@@ -219,7 +234,7 @@ compiler: CMakeFiles/compiler.dir/src/threeAdressCode.cpp.o
 compiler: CMakeFiles/compiler.dir/src/utils.cpp.o
 compiler: CMakeFiles/compiler.dir/build.make
 compiler: CMakeFiles/compiler.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/compiler39/compiler/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable compiler"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/compiler39/compiler/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable compiler"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/compiler.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

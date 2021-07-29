@@ -1,9 +1,12 @@
 #include "semanticAnalysis.h"
 #include "threeAdressCode.h"
+#include "genAssemble.h"
+#include "symbolTable.h"
 
 int semanticErrors;
 
 extern threeAdressCode TAC;
+CACTParser::CompUnitContext *compUnit;
 
 static void check_main() {
     FuncInfo * main;
@@ -45,11 +48,45 @@ void SemanticAnalysis::exitCompUnit(CACTParser::CompUnitContext * ctx)
 			ctx->code.addlines(ctx->decl()[i]->code.lines, ctx->decl()[i]->code.cur_line);
 		}
 	}
-	ctx->code.printTAC();
+	if(semanticErrors)
+		return;
+	// ctx->code.printTAC();
+	// here to access decl code
+	// ...
+	if(array_vector.size() == 0)
+	{
+		std::string dir = "../output/" + filename + ".s";
+		FILE * fp = fopen(dir.c_str() , "w");
+		genDecl(fp, ctx->code);
 
-	for(int i = 0; i < ctx->funcDef().size(); i++){
-		ctx->funcDef()[i]->code.printTAC();
+		for(int i = 0; i < ctx->funcDef().size(); i++){
+			ctx->code.codecat(ctx->funcDef()[i]->code);
+			// ctx->funcDef()[i]->code.printTAC();
+		}
+
+		// here to access fundef code 
+		// ...
+		for(int i = 0; i < ctx->funcDef().size(); i++){
+			genFunc(fp, ctx->funcDef()[i]->code, ctx->funcDef()[i]->plist);
+		}
+		genFloat(fp);
+
+		fclose(fp);
+	} 
+	else 
+	{
+		for(int i = 0; i < ctx->funcDef().size(); i++){
+			ctx->code.codecat(ctx->funcDef()[i]->code);
+			// ctx->funcDef()[i]->code.printTAC();
+		}
 	}
+
+	
+	
+
+	compUnit = ctx;
+
+	// compUnit = ctx;
 }
 
 void SemanticAnalysis::enterDecl(CACTParser::DeclContext * ctx)
@@ -61,6 +98,7 @@ void SemanticAnalysis::exitDecl(CACTParser::DeclContext * ctx)
 	// printf("Exiting Decl\n");
 
 	/** TAC */
+	int line = ctx->getStart()->getLine();
 	if(ctx->constDecl() != nullptr){
 		ctx->code.addlines(ctx->constDecl()->code.lines, ctx->constDecl()->code.cur_line);
 	}
@@ -129,7 +167,7 @@ void SemanticAnalysis::exitBType(CACTParser::BTypeContext * ctx)
 void SemanticAnalysis::enterConstDef(CACTParser::ConstDefContext * ctx)
 { 
 	// constDef : : Ident ('[' IntConst ']')*'=' constInitVal
-	printf("Entering ConstDef\n");
+	// printf("Entering ConstDef\n");
 }
 void SemanticAnalysis::exitConstDef(CACTParser::ConstDefContext * ctx)
 { 
@@ -166,12 +204,24 @@ void SemanticAnalysis::exitConstDef(CACTParser::ConstDefContext * ctx)
 
 	/** TAC */
 	if(ctx->IntConst() != nullptr){		// constDef : Ident '[' IntConst ']' '=' constInitVal
+		TACline line;
+		line.op = TACOP_NONE;
+		int size = ctx->btype == BTYPE_DOUBLE ? 8 : 4;
+		size = size * ctx->array_len;
+		line.arg1.init(BTYPE_INT, 1);
+		line.arg1.copyImm(&size);
+		line.arg2.init(BTYPE_INT, 1);
+		line.result.init(BTYPE_INT, 1);
+		ctx->code.addline(line);
 		for(int i = 0; i < ctx->array_len; i++){
 			TACline line;
 			line.op = TACOP_WOFF;
 
 			line.result.init((btype)ctx->btype, 0);
-			line.result.copyName(ctx->Ident()->getText());
+			std::string scopeid = "0";
+			if(sym_table.curr_scope)
+				scopeid = std::to_string(sym_table.curr_scope->id);
+			line.result.copyName(ctx->Ident()->getText() + "_" + scopeid);
 
 			line.arg1.init(BTYPE_INT, 1);
 			int off = i * line.result.size;
@@ -187,7 +237,10 @@ void SemanticAnalysis::exitConstDef(CACTParser::ConstDefContext * ctx)
 		TACline line;
 		line.op = TACOP_ASSIGN;
 		line.result.init((btype)ctx->btype, 0);
-		line.result.copyName(ctx->Ident()->getText());
+		std::string scopeid = "0";
+		if(sym_table.curr_scope)
+			scopeid = std::to_string(sym_table.curr_scope->id);
+		line.result.copyName(ctx->Ident()->getText() + "_" + scopeid);
 		line.arg1.init((btype)ctx->btype, 1);
 		line.arg1.copyImm(ctx->constInitVal()->val[0]);
 		line.arg2.init(BTYPE_ANY, 1);
@@ -240,7 +293,6 @@ void SemanticAnalysis::exitConstInitVal(CACTParser::ConstInitValContext * ctx)
 	// printf("Exiting ConstInitVal\n");
 }
 
-
 void SemanticAnalysis::enterVarDecl(CACTParser::VarDeclContext * ctx)
 {
     // printf("Entering VarDecl\n");
@@ -270,6 +322,48 @@ void SemanticAnalysis::exitVarDecl(CACTParser::VarDeclContext * ctx)
 
 	for(int i = 0; i < ctx->varDef().size(); i++){
 		ctx->code.addlines(ctx->varDef()[i]->code.lines, ctx->varDef()[i]->code.cur_line);
+	}
+	for(int i = 0; i < ctx->code.cur_line; i++){
+		if(ctx->code.lines[i].op == TACOP_ASSIGN && ctx->code.lines[i].arg1.type == BTYPE_ANY){
+			ctx->code.lines[i].result.init(ctx->bType()->btype, 0);
+			ctx->code.lines[i].arg1.init(ctx->bType()->btype, 1);
+			if(ctx->code.lines[i].arg1.type == BTYPE_DOUBLE){
+				double d = 0;
+				ctx->code.lines[i].arg1.copyImm(&d);
+			}
+			else if(ctx->code.lines[i].arg1.type == BTYPE_FLOAT){
+				float f = 0;
+				ctx->code.lines[i].arg1.copyImm(&f);
+			}
+			else{
+				int d = 0;
+				ctx->code.lines[i].arg1.copyImm(&d);
+			}
+		}
+		else if(ctx->code.lines[i].op == TACOP_WOFF && ctx->code.lines[i].arg2.type == BTYPE_ANY){
+			ctx->code.lines[i].result.init(ctx->bType()->btype, 0);
+			ctx->code.lines[i].arg2.init(ctx->bType()->btype, 1);
+			if(ctx->code.lines[i].arg2.type == BTYPE_DOUBLE){
+				double d = 0;
+				ctx->code.lines[i].arg2.copyImm(&d);
+			}
+			else if(ctx->code.lines[i].arg2.type == BTYPE_FLOAT){
+				float f = 0;
+				ctx->code.lines[i].arg2.copyImm(&f);
+			}
+			else{
+				int d = 0;
+				ctx->code.lines[i].arg2.copyImm(&d);
+			}
+			int off = *(int*)ctx->code.lines[i].arg1.data * ctx->code.lines->result.size;
+			ctx->code.lines[i].arg1.copyImm(&off);
+		}
+		else if(ctx->code.lines[i].op == TACOP_NONE && ctx->code.lines[i].arg2.type == BTYPE_ANY){
+			int size = *(int *)ctx->code.lines[i].arg1.data;
+			int width = ctx->bType()->btype == BTYPE_DOUBLE ? 8 : 4;
+			size = size * width;
+			ctx->code.lines[i].arg1.copyImm(&size);
+		}
 	}
 }
 
@@ -313,14 +407,26 @@ void SemanticAnalysis::exitVarDef(CACTParser::VarDefContext * ctx)
 	/** TAC */
 	if(ctx->constInitVal() != nullptr){
 		if(ctx->IntConst() != nullptr){		// varDef : Ident '[' IntConst ']' '=' constInitVal
+			TACline line;
+			line.op = TACOP_NONE;
+			int size = ctx->btype == BTYPE_DOUBLE ? 8 : 4;
+			size = size * ctx->array_len;
+			line.arg1.init(BTYPE_INT, 1);
+			line.arg1.copyImm(&size);
+			line.arg2.init(BTYPE_INT, 1);
+			line.result.init(BTYPE_INT, 1);
+			ctx->code.addline(line);
 			for(int i = 0; i < ctx->array_len; i++){
 				TACline line;
 				line.op = TACOP_WOFF;
 				line.result.init((btype)ctx->btype, 0);
-				line.result.copyName(ctx->Ident()->getText());
+				std::string scopeid = "0";
+				if(sym_table.curr_scope)
+					scopeid = std::to_string(sym_table.curr_scope->id);
+				line.result.copyName(ctx->Ident()->getText() + "_" + scopeid);
 				line.arg1.init(BTYPE_INT, 1);
 				int off = i * line.result.size;
-				line.arg1.copyImm(&i);
+				line.arg1.copyImm(&off);
 				line.arg2.init((btype)ctx->btype, 1);
 				line.arg2.copyImm(ctx->constInitVal()->val[i]);
 				ctx->code.addline(line);
@@ -330,9 +436,50 @@ void SemanticAnalysis::exitVarDef(CACTParser::VarDefContext * ctx)
 			TACline line;
 			line.op = TACOP_ASSIGN;
 			line.result.init((btype)ctx->btype, 0);
-			line.result.copyName(ctx->Ident()->getText());
+			std::string scopeid = "0";
+			if(sym_table.curr_scope)
+				scopeid = std::to_string(sym_table.curr_scope->id);
+			line.result.copyName(ctx->Ident()->getText() + "_" + scopeid);
 			line.arg1.init((btype)ctx->btype, 1);
 			line.arg1.copyImm(ctx->constInitVal()->val[0]);
+			line.arg2.init(BTYPE_ANY, 1);
+			ctx->code.addline(line);
+		}
+	}
+	else{
+		if(ctx->IntConst() != nullptr){		// varDef : Ident '[' IntConst ']' '=' constInitVal
+			TACline line;
+			line.op = TACOP_NONE;
+			int size = ctx->array_len;
+			line.arg1.init(BTYPE_INT, 1);
+			line.arg1.copyImm(&size);
+			line.arg2.init(BTYPE_ANY, 1);
+			line.result.init(BTYPE_INT, 1);
+			ctx->code.addline(line);
+			for(int i = 0; i < ctx->array_len; i++){
+				TACline line;
+				line.op = TACOP_WOFF;
+				line.result.init((btype)ctx->btype, 0);
+				std::string scopeid = "0";
+				if(sym_table.curr_scope)
+					scopeid = std::to_string(sym_table.curr_scope->id);
+				line.result.copyName(ctx->Ident()->getText() + "_" + scopeid);
+				line.arg1.init(BTYPE_INT, 1);
+				int off = i;
+				line.arg1.copyImm(&off);
+				line.arg2.init((btype)ctx->btype, 1);
+				ctx->code.addline(line);
+			}
+		}
+		else{		//varDef : Ident '=' constInitVal
+			TACline line;
+			line.op = TACOP_ASSIGN;
+			line.result.init((btype)ctx->btype, 0);
+			std::string scopeid = "0";
+			if(sym_table.curr_scope)
+				scopeid = std::to_string(sym_table.curr_scope->id);
+			line.result.copyName(ctx->Ident()->getText() + "_" + scopeid);
+			line.arg1.init((btype)ctx->btype, 1);
 			line.arg2.init(BTYPE_ANY, 1);
 			ctx->code.addline(line);
 		}
@@ -362,20 +509,23 @@ void SemanticAnalysis::enterFuncDef(CACTParser::FuncDefContext * ctx)
 }
 void SemanticAnalysis::exitFuncDef(CACTParser::FuncDefContext * ctx)
 {
+	int line = ctx->getStart()->getLine();
 	if(sym_table.curr_scope == NULL)return;
 	sym_table.scope_ret();
 	// printf("Exiting FuncDef\n");
 
 	/** TAC */
-	TACline line;
-	line.op = TACOP_LABEL;
-	line.arg1.init(BTYPE_ANY, 0);
-	line.arg1.copyName(ctx->Ident()->getText());
-	line.arg2.init(BTYPE_ANY, 1);
-	line.result.init(BTYPE_ANY, 1);
-	ctx->code.addline(line);
+	TACline tacline;
+	tacline.op = TACOP_LABEL;
+	tacline.arg1.init(BTYPE_ANY, 0);
+	tacline.arg1.copyName(ctx->Ident()->getText());
+	tacline.arg2.init(BTYPE_ANY, 1);
+	tacline.result.init(BTYPE_ANY, 1);
+	ctx->code.addline(tacline);
 	ctx->code.addlines(ctx->block()->code.lines, ctx->block()->code.cur_line);
-
+	
+	if(ctx->funcFParams() != nullptr) ctx->plist = ctx->funcFParams()->plist;
+	else ctx->plist = nullptr;
 }
 
 void SemanticAnalysis::enterFuncType(CACTParser::FuncTypeContext * ctx)
@@ -398,10 +548,19 @@ void SemanticAnalysis::exitFuncFParams(CACTParser::FuncFParamsContext * ctx)
 	for(int i = 0; i < ctx->funcFParam().size(); i++){
 		sym_table.addPara(ctx->funcFParam()[i]->Ident()->getText(), ctx->funcFParam()[i]->btype, 0);
 	}
+	int line = ctx->getStart()->getLine();
 	// std::cout << sym_table.curr_scope->curr_func->cnt_para << std::endl;
 	// std::cout << sym_table.curr_scope->curr_func->name << std::endl;
 	// printf("Exiting FuncFParams\n");
 
+	ctx->plist = (struct paramList *)malloc(sizeof(struct paramList));
+	ctx->plist->numParams = ctx->funcFParam().size();
+	ctx->plist->p = (struct param *)malloc(sizeof(struct param) * ctx->plist->numParams);
+	for(int i = 0; i < ctx->funcFParam().size(); i++){
+		ctx->plist->p[i].btype = ctx->funcFParam()[i]->btype;
+		VarInfo * var = sym_table.lookup_all(ctx->funcFParam()[i]->Ident()->getText());
+		ctx->plist->p[i].name = ctx->funcFParam()[i]->Ident()->getText() + "_" + std::to_string(var->scopeID);
+	}
 }
 
 void SemanticAnalysis::enterFuncFParam(CACTParser::FuncFParamContext * ctx)
@@ -444,6 +603,7 @@ void SemanticAnalysis::enterBlock(CACTParser::BlockContext * ctx)
 }
 void SemanticAnalysis::exitBlock(CACTParser::BlockContext * ctx)
 { 
+	int line = ctx->getStart()->getLine();
 	int i;
 	for(i = 0; i < ctx->blockItem().size(); i++)
 	{
@@ -466,6 +626,7 @@ void SemanticAnalysis::enterBlockItem(CACTParser::BlockItemContext * ctx)
 }
 void SemanticAnalysis::exitBlockItem(CACTParser::BlockItemContext * ctx)
 { 
+	int line = ctx->getStart()->getLine();
 	if(ctx->decl())		// blockItem : decl
 	{
 		ctx->code.codecat(ctx->decl()->code);
@@ -494,7 +655,7 @@ void SemanticAnalysis::enterStmt(CACTParser::StmtContext * ctx)
 			semanticErrors++;
 		}
 
-		ctx->lVal()->temp = mynewtemp();
+		// ctx->lVal()->temp = mynewtemp();
 		ctx->exp()->temp = mynewtemp();
 	} else if(ctx->block()) {		// stmt : block
 		// sym_table.addScope(line);
@@ -553,6 +714,8 @@ void SemanticAnalysis::enterStmt(CACTParser::StmtContext * ctx)
 		}
 	} else if(ctx->getStart()->getText() == std::string("return")) {		// stmt : 'return' exp? ';'
 		
+	} else if(ctx->exp()) {		// stmt : (exp)?
+		
 	}
 }
 void SemanticAnalysis::exitStmt(CACTParser::StmtContext * ctx)
@@ -591,16 +754,39 @@ void SemanticAnalysis::exitStmt(CACTParser::StmtContext * ctx)
 	// generate TAC
 	if(ctx->lVal() && ctx->exp())		// stmt : lVal '=' exp ';'
 	{
-		ctx->code.codecat(ctx->lVal()->code);
-		ctx->code.codecat(ctx->exp()->code);
-		TACline tacline;
-		tacline.op = TACOP_ASSIGN;
-		tacline.arg1.init(ctx->exp()->btype, 0);
-		tacline.arg2.init(BTYPE_ANY, 1);
-		tacline.arg1.copyName(ctx->exp()->temp);
-		tacline.result.init(ctx->lVal()->btype, 0);
-		tacline.result.copyName(ctx->lVal()->temp);
-		ctx->code.addline(tacline);
+		if(ctx->lVal()->exp())		// lval为数组
+		{
+			ctx->code.codecat(ctx->exp()->code);
+			ctx->code.codecat(ctx->lVal()->code);
+
+			VarInfo* vi = sym_table.lookup_all(ctx->lVal()->Ident()->getText());
+			TACline tacline;
+			tacline.op = TACOP_WOFF;
+			tacline.arg1.init(BTYPE_INT, 0);
+			tacline.arg1.copyName(ctx->lVal()->temp);
+			tacline.arg2.init(ctx->exp()->btype, 0);
+			tacline.arg2.copyName(ctx->exp()->temp);
+			tacline.result.init(ctx->lVal()->btype, 0);
+			tacline.result.copyName(ctx->lVal()->Ident()->getText() + "_" + std::to_string(vi->scopeID));
+			ctx->code.addline(tacline);
+		} else {		// lVal为Ident
+			if(ctx->lVal()->array_len > 0)
+			{
+				array_vector.push_back(std::pair<std::string, int>(ctx->lVal()->Ident()->getText(), ctx->lVal()->array_len));
+				array_vector_str.push_back(ctx->getText());
+			}
+			ctx->code.codecat(ctx->exp()->code);
+			VarInfo* vi = sym_table.lookup_all(ctx->lVal()->Ident()->getText());
+			TACline tacline;
+			tacline.op = TACOP_ASSIGN;
+			tacline.arg1.init(ctx->exp()->btype, 0);
+			tacline.arg2.init(BTYPE_ANY, 1);
+			tacline.arg1.copyName(ctx->exp()->temp);
+			tacline.result.init(ctx->lVal()->btype, 0);
+			tacline.result.copyName(ctx->lVal()->Ident()->getText() + "_" + std::to_string(vi->scopeID));
+			ctx->code.addline(tacline);
+		}
+		
 	} else if(ctx->block()) {		// stmt : block
 		ctx->code.codecat(ctx->block()->code);
 	} else if(ctx->getStart()->getText() == std::string("if")) {		// stmt : 'if' '(' cond ')' stmt ('else' stmt)?
@@ -619,6 +805,9 @@ void SemanticAnalysis::exitStmt(CACTParser::StmtContext * ctx)
 			ctx->code.addline(label);
 			// stmt_1.code
 			ctx->code.codecat(ctx->stmt().at(0)->code);
+			// ctx.next
+			label.arg1.copyName(ctx->next);
+			ctx->code.addline(label);
 		} else if(ctx->stmt().size() == 2) {	// stmt : 'if' '(' cond ')' stmt 'else' stmt
 			ctx->code = threeAdressCode();
 			// cond.code
@@ -646,6 +835,9 @@ void SemanticAnalysis::exitStmt(CACTParser::StmtContext * ctx)
 			ctx->code.addline(label);
 			// stmt_2.code
 			ctx->code.codecat(ctx->stmt().at(1)->code);
+			// ctx.next
+			label.arg1.copyName(ctx->next);
+			ctx->code.addline(label);
 		}
 	} else if(ctx->getStart()->getText() == std::string("while")) {		// stmt : 'while' '(' cond ')' stmt
 		ctx->stmt().at(0)->in_loop = 1;
@@ -663,6 +855,8 @@ void SemanticAnalysis::exitStmt(CACTParser::StmtContext * ctx)
 		ctx->code.codecat(ctx->cond()->code);
 		label.arg1.copyName(ctx->cond()->t);
 		// label(cond.true)
+		ctx->code.addline(label);
+		// stmt.code
 		ctx->code.codecat(ctx->stmt().at(0)->code);
 		jump.op = TACOP_J;
 		jump.arg1.init(BTYPE_ANY, 0);
@@ -671,6 +865,9 @@ void SemanticAnalysis::exitStmt(CACTParser::StmtContext * ctx)
 		jump.arg1.copyName(ctx->stmt().at(0)->next);
 		// goto S1.next
 		ctx->code.addline(jump);
+		// ctx.next
+		label.arg1.copyName(ctx->next);
+		ctx->code.addline(label);
 	} else if(ctx->getStart()->getText() == std::string("break")) {		// stmt : 'break' ';'
 		TACline jump;
 		jump.op = TACOP_J;
@@ -688,17 +885,20 @@ void SemanticAnalysis::exitStmt(CACTParser::StmtContext * ctx)
 		jump.arg1.copyName(ctx->contnext);
 		ctx->code.addline(jump);
 	} else if(ctx->getStart()->getText() == std::string("return")) {		// stmt : 'return' exp? ';'
-		ctx->code.codecat(ctx->exp()->code);
+		if(ctx->exp())
+			ctx->code.codecat(ctx->exp()->code);
 		TACline ret;
 		ret.op = TACOP_RETURN;
 		if(ctx->exp())
 		{
-			ret.arg1.init(BTYPE_ANY, 0);
+			ret.arg1.init(ctx->exp()->btype, 0);
 			ret.arg1.copyName(ctx->exp()->temp);
 		} else ret.arg1.init(BTYPE_ANY, 1);
 		ret.arg2.init(BTYPE_ANY, 1);
 		ret.result.init(BTYPE_ANY, 1);
 		ctx->code.addline(ret);
+	} else if(ctx->exp()) {		// stmt : (exp)?
+		ctx->code.codecat(ctx->exp()->code);
 	}
 	
 }
@@ -711,12 +911,12 @@ void SemanticAnalysis::enterExp(CACTParser::ExpContext * ctx)
 		ctx->addExp()->temp = ctx->temp;
 	} else {		// exp : BoolConst
 		ctx->temp = mynewtemp();
-		ctx->boolConst()->temp = ctx->temp;
 	}
 }
 void SemanticAnalysis::exitExp(CACTParser::ExpContext * ctx)
 { 
 // printf("Exiting Exp\n");
+	int line = ctx->getStart()->getLine();
 	if(ctx->addExp())		// exp : addExp
 	{
 		ctx->btype = ctx->addExp()->btype;
@@ -725,7 +925,16 @@ void SemanticAnalysis::exitExp(CACTParser::ExpContext * ctx)
 	} else {		// exp : BoolConst
 		ctx->btype = BTYPE_BOOL;
 		ctx->array_len = 0;
-		ctx->code.codecat(ctx->boolConst()->code);
+		
+		TACline tacline;
+		int res = ctx->boolConst()->getText() == "true" ? 1 : 0;
+		tacline.op = TACOP_ASSIGN;
+		tacline.arg1.init(BTYPE_INT, 1);
+		tacline.arg2.init(BTYPE_ANY, 1);
+		tacline.arg1.copyImm(&res);
+		tacline.result.init(BTYPE_ANY, 0);
+		tacline.result.copyName(ctx->temp);
+		ctx->code.addline(tacline);
 	}
 }
 
@@ -791,39 +1000,38 @@ void SemanticAnalysis::exitLVal(CACTParser::LValContext * ctx)
 		}
 
 		ctx->code.codecat(ctx->exp()->code);
-		TACline line;
-		line.op = TACOP_MUL;
-		std::string temp = mynewtemp();
-		line.result.init(BTYPE_ANY, 0);
-		line.result.copyName(temp);
-		line.arg1.init(ctx->exp()->btype, 0);
-		line.arg1.copyName(ctx->exp()->temp);
-		line.arg2.init(BTYPE_INT, 1);
 		int width;
-		assert(ctx->btype == BTYPE_BOOL || ctx->btype == BTYPE_INT || ctx->btype == BTYPE_FLOAT || ctx->btype == BTYPE_DOUBLE);
 		if(ctx->btype == BTYPE_DOUBLE)
 			width = 8;
 		else width = 4;
-		line.arg2.copyImm(&width);
-		ctx->code.addline(line);
+		ctx->temp = mynewtemp();
+		TACline tacline;
+		std::string temp = mynewtemp();
+		tacline.op = TACOP_ASSIGN;
+		tacline.result.init(BTYPE_INT, 0);
+		tacline.arg1.init(BTYPE_INT, 1);
+		tacline.arg2.init(BTYPE_ANY, 1);
+		tacline.result.copyName(temp);
+		tacline.arg1.copyImm(&width);
+		ctx->code.addline(tacline);
 
-		line.op = TACOP_ROFF;
-		line.result.init(BTYPE_ANY, 0);
-		line.result.copyName(ctx->temp);
-		line.arg1.init(ctx->btype, 0);
-		line.arg1.copyName(ctx->Ident()->getText());
-		line.arg2.init(ctx->exp()->btype, 0);
-		line.arg2.copyName(ctx->Ident()->getText());
-		ctx->code.addline(line);
+		tacline.op = TACOP_MUL;
+		tacline.arg1.init(ctx->exp()->btype, 0);
+		tacline.arg1.copyName(ctx->exp()->temp);
+		tacline.arg2.init(BTYPE_INT, 0);
+		tacline.arg2.copyName(temp);
+		tacline.result.init(BTYPE_INT, 0);
+		tacline.result.copyName(ctx->temp);
+		ctx->code.addline(tacline);
 	} else {		// lVal : Ident
-		TACline line;
-		line.op = TACOP_ASSIGN;
-		line.result.init(BTYPE_ANY, 0);
-		line.result.copyName(ctx->temp);
-		line.arg1.init(ctx->btype, 0);
-		line.arg2.init(BTYPE_ANY, 1);
-		line.arg1.copyName(ctx->Ident()->getText());
-		ctx->code.addline(line);
+		// TACline line;
+		// line.op = TACOP_ASSIGN;
+		// line.result.init(BTYPE_ANY, 0);
+		// line.result.copyName(ctx->temp);
+		// line.arg1.init(ctx->btype, 0);
+		// line.arg2.init(BTYPE_ANY, 1);
+		// line.arg1.copyName(ctx->Ident()->getText());
+		// ctx->code.addline(line);
 	}
 }
 
@@ -840,7 +1048,7 @@ void SemanticAnalysis::enterPrimaryExp(CACTParser::PrimaryExpContext * ctx)
 	}
 	else if(ctx->lVal())	// primaryExp : lVal
 	{
-		ctx->lVal()->temp = ctx->temp;
+
 	}
 }
 
@@ -865,6 +1073,7 @@ static void getnumber(void* number, CACTParser::NumberContext *ctx)
 
 void SemanticAnalysis::exitPrimaryExp(CACTParser::PrimaryExpContext * ctx)
 { 
+	int line = ctx->getStart()->getLine();
 	if(ctx->number())		// primaryExp : number
 	{
 		ctx->btype = ctx->number()->btype;
@@ -872,7 +1081,7 @@ void SemanticAnalysis::exitPrimaryExp(CACTParser::PrimaryExpContext * ctx)
 
 		TACline line;
 		line.op = TACOP_ASSIGN;
-		line.result.init(BTYPE_ANY, 0);
+		line.result.init(ctx->btype, 0);
 		line.result.copyName(ctx->temp);
 		line.arg1.init(ctx->number()->btype, 1);
 		line.arg2.init(BTYPE_ANY, 1);
@@ -888,6 +1097,15 @@ void SemanticAnalysis::exitPrimaryExp(CACTParser::PrimaryExpContext * ctx)
 		ctx->array_len = ctx->exp()->array_len;
 
 		ctx->code.codecat(ctx->exp()->code);
+
+		TACline line;
+		line.op = TACOP_ASSIGN;
+		line.result.init(ctx->btype, 0);
+		line.result.copyName(ctx->temp);
+		line.arg1.init(ctx->exp()->btype, 0);
+		line.arg1.copyName(ctx->exp()->temp);
+		line.arg2.init(BTYPE_ANY, 1);
+		ctx->code.addline(line);
 	}
 	else if(ctx->lVal())	// primaryExp : lVal
 	{
@@ -895,6 +1113,36 @@ void SemanticAnalysis::exitPrimaryExp(CACTParser::PrimaryExpContext * ctx)
 		ctx->array_len = ctx->lVal()->array_len;
 
 		ctx->code.codecat(ctx->lVal()->code);
+
+		if(ctx->lVal()->exp())
+		{
+			VarInfo* vi = sym_table.lookup_all(ctx->lVal()->Ident()->getText());
+			TACline line;
+			line.op = TACOP_ROFF;
+			line.arg1.init(ctx->lVal()->btype, 0);
+			line.arg1.copyName(ctx->lVal()->Ident()->getText() + "_" + std::to_string(vi->scopeID));
+			line.arg2.init(BTYPE_INT, 0);
+			line.arg2.copyName(ctx->lVal()->temp);
+			line.result.init(ctx->btype, 0);
+			line.result.copyName(ctx->temp);
+			ctx->code.addline(line);
+		} else {
+			if(ctx->lVal()->array_len > 0)
+			{
+				array_vector.push_back(std::pair<std::string, int>(ctx->lVal()->Ident()->getText(), ctx->lVal()->array_len));
+				array_vector_str.push_back("0");
+			}
+			VarInfo* vi = sym_table.lookup_all(ctx->lVal()->Ident()->getText());
+			TACline line;
+			line.op = TACOP_ASSIGN;
+			line.arg1.init(ctx->lVal()->btype, 0);
+			line.arg2.init(BTYPE_ANY, 1);
+			line.result.init(ctx->btype, 0);
+			line.arg1.copyName(ctx->lVal()->Ident()->getText() + "_" + std::to_string(vi->scopeID));
+			line.result.copyName(ctx->temp);
+			ctx->code.addline(line);
+		}
+		
 	}
 	// printf("Exiting PrimaryExp\n");
 
@@ -906,6 +1154,7 @@ void SemanticAnalysis::enterNumber(CACTParser::NumberContext * ctx)
 }
 void SemanticAnalysis::exitNumber(CACTParser::NumberContext * ctx)
 { 
+	int line = ctx->getStart()->getLine();
 	if(ctx->IntConst())//IntConst
 	{
 		ctx->btype = BTYPE_INT;
@@ -967,6 +1216,7 @@ void SemanticAnalysis::enterUnaryExp(CACTParser::UnaryExpContext * ctx)
 }
 void SemanticAnalysis::exitUnaryExp(CACTParser::UnaryExpContext * ctx)
 { 
+	int line = ctx->getStart()->getLine();
 	if(ctx->primaryExp() != NULL){		// unaryExp : primaryExp
 		ctx->btype = ctx->primaryExp()->btype;
 		ctx->array_len =ctx->primaryExp()->array_len;
@@ -998,21 +1248,28 @@ void SemanticAnalysis::exitUnaryExp(CACTParser::UnaryExpContext * ctx)
 			}
 		}
 
-		ctx->code.codecat(ctx->funcRParams()->code);
-		int numparam = ctx->funcRParams()->exp().size();
+		int numparam;
+		if(ctx->funcRParams())
+		{
+			ctx->code.codecat(ctx->funcRParams()->code);
+			numparam = ctx->funcRParams()->exp().size();
+		} else numparam = 0;
 		TACline line;
 		line.op = TACOP_PARAM;
-		line.arg1.init(BTYPE_ANY, 0);
+		line.arg2.init(BTYPE_INT, 1);
+		line.result.init(BTYPE_INT, 1);
 		for(int i = 0; i < numparam; i++)
 		{
+			line.arg1.init(ctx->funcRParams()->exp()[i]->btype, 0);
 			line.arg1.copyName(ctx->funcRParams()->exp()[i]->temp);
 			ctx->code.addline(line);
 		}
 		line.op = TACOP_CALL;
+		line.arg1.init(BTYPE_ANY, 0);
 		line.arg1.copyName(ctx->Ident()->getText());
 		line.arg2.init(BTYPE_INT, 1);
 		line.arg2.copyImm(&numparam);
-		line.result.init(BTYPE_ANY, 0);
+		line.result.init(ctx->btype, 0);
 		line.result.copyName(ctx->temp);
 		ctx->code.addline(line);
 	}
@@ -1066,6 +1323,7 @@ void SemanticAnalysis::enterFuncRParams(CACTParser::FuncRParamsContext * ctx)
 void SemanticAnalysis::exitFuncRParams(CACTParser::FuncRParamsContext * ctx)
 { 
 // printf("Exiting FuncRParams\n");
+	int line = ctx->getStart()->getLine();
 	for(int i = 0; i < ctx->exp().size(); i++)
 	{
 		ctx->code.codecat(ctx->exp()[i]->code);
@@ -1166,7 +1424,11 @@ void SemanticAnalysis::exitAddExp(CACTParser::AddExpContext * ctx)
 		ctx->code.codecat(ctx->addExp()->code);
 		ctx->code.codecat(ctx->mulExp()->code);
 		TACline line;
-		line.op = TACOP_ADD;
+		if(ctx->getText().find("+") != ctx->getText().npos)
+			line.op = TACOP_ADD;
+		else if(ctx->getText().find("-") != ctx->getText().npos)
+			line.op = TACOP_SUB;
+		else assert(0);
 		line.result.init(ctx->btype, 0);
 		line.result.copyName(ctx->temp);
 		line.arg1.init(ctx->addExp()->btype, 0);
@@ -1231,7 +1493,7 @@ void SemanticAnalysis::exitRelExp(CACTParser::RelExpContext * ctx)
 		jump.arg1.init(BTYPE_BOOL, 0);
 		jump.arg1.copyName(ctx->relExp()->temp);
 		jump.arg2.init(BTYPE_BOOL, 0);
-		jump.arg1.copyName(ctx->addExp()->temp);
+		jump.arg2.copyName(ctx->addExp()->temp);
 		jump.result.init(BTYPE_ANY, 0);
 		jump.result.copyName(ctx->t);
 		ctx->code.addline(jump);
@@ -1247,7 +1509,15 @@ void SemanticAnalysis::exitRelExp(CACTParser::RelExpContext * ctx)
 	{
 		ctx->btype = BTYPE_BOOL;
 
-		ctx->code.codecat(ctx->boolConst()->code);
+		TACline tacline;
+		int res = ctx->getText() == "true" ? 1 : 0;
+		tacline.op = TACOP_ASSIGN;
+		tacline.arg1.init(BTYPE_INT, 1);
+		tacline.arg2.init(BTYPE_ANY, 1);
+		tacline.arg1.copyImm(&res);
+		tacline.result.init(BTYPE_ANY, 0);
+		tacline.result.copyName(ctx->temp);
+		ctx->code.addline(tacline);
 	}
 	else if(ctx->addExp())		// relExp : addExp
 	{
@@ -1259,7 +1529,7 @@ void SemanticAnalysis::exitRelExp(CACTParser::RelExpContext * ctx)
 		}
 		ctx->btype = ctx->addExp()->btype;
 	
-		ctx->code.codecat(ctx->relExp()->code);
+		ctx->code.codecat(ctx->addExp()->code);
 	}
 
 // printf("Exiting RelExp\n");
@@ -1280,6 +1550,7 @@ void SemanticAnalysis::enterEqExp(CACTParser::EqExpContext * ctx)
 	{
 		ctx->relExp()->f = ctx->f;
 		ctx->relExp()->t = ctx->t;
+		ctx->relExp()->temp = ctx->temp;
 	}
 }
 void SemanticAnalysis::exitEqExp(CACTParser::EqExpContext * ctx)
@@ -1307,7 +1578,7 @@ void SemanticAnalysis::exitEqExp(CACTParser::EqExpContext * ctx)
 		jump.arg1.init(BTYPE_BOOL, 0);
 		jump.arg1.copyName(ctx->eqExp()->temp);
 		jump.arg2.init(BTYPE_BOOL, 0);
-		jump.arg1.copyName(ctx->relExp()->temp);
+		jump.arg2.copyName(ctx->relExp()->temp);
 		jump.result.init(BTYPE_ANY, 0);
 		jump.result.copyName(ctx->t);
 		ctx->code.addline(jump);
@@ -1438,6 +1709,7 @@ void SemanticAnalysis::enterConstExpNumber(CACTParser::ConstExpNumberContext * c
 }
 void SemanticAnalysis::exitConstExpNumber(CACTParser::ConstExpNumberContext * ctx)
 {
+	int line = ctx->getStart()->getLine();
 	if(ctx->number())
 	{
 		ctx->btype = ctx->number()->btype;
@@ -1454,26 +1726,20 @@ void SemanticAnalysis::enterConstExpBoolConst(CACTParser::ConstExpBoolConstConte
 }
 void SemanticAnalysis::exitConstExpBoolConst(CACTParser::ConstExpBoolConstContext * ctx)
 { 
+	int line = ctx->getStart()->getLine();
 	ctx->btype = BTYPE_BOOL;
-	ctx->val = (char *)malloc(sizeof(bool));
+	ctx->val = (char *)malloc(sizeof(int));
 	if(ctx->getStart()->getText() == "true"){
 		int b = 1;
-		memcpy(ctx->val, &b, sizeof(bool));
+		//printf("true\n");
+		memcpy(ctx->val, &b, sizeof(int));
 	}
 	else{
 		int b = 0;
-		memcpy(ctx->val, &b, sizeof(bool));
+		//printf("flase\n");
+		memcpy(ctx->val, &b, sizeof(int));
 	}
-	TACline line;
-	int res = ctx->getText() == "true" ? 1 : 0;
-	line.op = TACOP_ASSIGN;
-	line.arg1.init(BTYPE_INT, 1);
-	line.arg2.init(BTYPE_ANY, 1);
-	line.arg1.copyImm(&res);
-	line.result.init(BTYPE_ANY, 0);
-	line.result.copyName(ctx->temp);
-	ctx->code.addline(line);
-	// printf("Exiting ConstExpBoolConst\n");
+	//printf("Exiting ConstExpBoolConst\n");
 }
 
 

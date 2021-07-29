@@ -1145,6 +1145,8 @@ string
 -
 ../src/threeAdressCode.h
 /home/compiler39/compiler/src/threeAdressCode.h
+../src/genAssemble.h
+/home/compiler39/compiler/src/genAssemble.h
 CACTBaseListener.h
 /home/compiler39/compiler/grammar/CACTBaseListener.h
 
@@ -1155,6 +1157,8 @@ string
 -
 ../src/threeAdressCode.h
 /home/compiler39/compiler/src/threeAdressCode.h
+../src/genAssemble.h
+/home/compiler39/compiler/src/genAssemble.h
 antlr4-runtime.h
 /home/compiler39/compiler/grammar/antlr4-runtime.h
 CACTListener.h
@@ -1167,6 +1171,8 @@ string
 -
 ../src/threeAdressCode.h
 /home/compiler39/compiler/src/threeAdressCode.h
+../src/genAssemble.h
+/home/compiler39/compiler/src/genAssemble.h
 CACTLexer.h
 /home/compiler39/compiler/grammar/CACTLexer.h
 
@@ -1177,6 +1183,8 @@ string
 -
 ../src/threeAdressCode.h
 /home/compiler39/compiler/src/threeAdressCode.h
+../src/genAssemble.h
+/home/compiler39/compiler/src/genAssemble.h
 antlr4-runtime.h
 /home/compiler39/compiler/grammar/antlr4-runtime.h
 
@@ -1187,6 +1195,8 @@ string
 -
 ../src/threeAdressCode.h
 /home/compiler39/compiler/src/threeAdressCode.h
+../src/genAssemble.h
+/home/compiler39/compiler/src/genAssemble.h
 CACTListener.h
 /home/compiler39/compiler/grammar/CACTListener.h
 
@@ -1197,6 +1207,8 @@ string
 -
 ../src/threeAdressCode.h
 /home/compiler39/compiler/src/threeAdressCode.h
+../src/genAssemble.h
+/home/compiler39/compiler/src/genAssemble.h
 antlr4-runtime.h
 /home/compiler39/compiler/grammar/antlr4-runtime.h
 CACTParser.h
@@ -1209,6 +1221,8 @@ string
 -
 ../src/threeAdressCode.h
 /home/compiler39/compiler/src/threeAdressCode.h
+../src/genAssemble.h
+/home/compiler39/compiler/src/genAssemble.h
 CACTListener.h
 /home/compiler39/compiler/grammar/CACTListener.h
 CACTParser.h
@@ -1221,8 +1235,22 @@ string
 -
 ../src/threeAdressCode.h
 /home/compiler39/compiler/src/threeAdressCode.h
+../src/genAssemble.h
+/home/compiler39/compiler/src/genAssemble.h
 antlr4-runtime.h
 /home/compiler39/compiler/grammar/antlr4-runtime.h
+
+/home/compiler39/compiler/src/genAssemble.h
+./symbolTable.h
+/home/compiler39/compiler/src/symbolTable.h
+./list.h
+/home/compiler39/compiler/src/list.h
+./threeAdressCode.h
+/home/compiler39/compiler/src/threeAdressCode.h
+
+/home/compiler39/compiler/src/list.h
+stddef.h
+-
 
 /home/compiler39/compiler/src/main.cpp
 iostream
@@ -1245,6 +1273,10 @@ semanticAnalysis.h
 /home/compiler39/compiler/src/semanticAnalysis.h
 threeAdressCode.h
 /home/compiler39/compiler/src/threeAdressCode.h
+genAssemble.h
+/home/compiler39/compiler/src/genAssemble.h
+symbolTable.h
+/home/compiler39/compiler/src/symbolTable.h
 
 /home/compiler39/compiler/src/semanticAnalysis.h
 ../grammar/CACTBaseListener.h
@@ -1263,6 +1295,8 @@ threeAdressCode.h
 /home/compiler39/compiler/src/symbolTable.h
 
 /home/compiler39/compiler/src/utils.h
+bits/stdc++.h
+-
 vector
 -
 map

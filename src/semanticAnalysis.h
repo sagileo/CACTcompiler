@@ -6,6 +6,9 @@
 #include "../grammar/CACTBaseListener.h"
 #include "./symbolTable.h"
 
+extern CACTParser::CompUnitContext *compUnit;
+extern std::string filename;
+
 
 /* static std::string str_dup(std::string str, int times)
 {

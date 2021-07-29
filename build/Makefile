@@ -250,6 +250,33 @@ grammar/CACTParser.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/grammar/CACTParser.cpp.s
 .PHONY : grammar/CACTParser.cpp.s
 
+src/genAssemble.o: src/genAssemble.cpp.o
+
+.PHONY : src/genAssemble.o
+
+# target to build an object file
+src/genAssemble.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/genAssemble.cpp.o
+.PHONY : src/genAssemble.cpp.o
+
+src/genAssemble.i: src/genAssemble.cpp.i
+
+.PHONY : src/genAssemble.i
+
+# target to preprocess a source file
+src/genAssemble.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/genAssemble.cpp.i
+.PHONY : src/genAssemble.cpp.i
+
+src/genAssemble.s: src/genAssemble.cpp.s
+
+.PHONY : src/genAssemble.s
+
+# target to generate assembly for a file
+src/genAssemble.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/src/genAssemble.cpp.s
+.PHONY : src/genAssemble.cpp.s
+
 src/main.o: src/main.cpp.o
 
 .PHONY : src/main.o
@@ -406,6 +433,9 @@ help:
 	@echo "... grammar/CACTParser.o"
 	@echo "... grammar/CACTParser.i"
 	@echo "... grammar/CACTParser.s"
+	@echo "... src/genAssemble.o"
+	@echo "... src/genAssemble.i"
+	@echo "... src/genAssemble.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

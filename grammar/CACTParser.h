@@ -2,6 +2,7 @@
     #include <vector>
     #include <string>
 	#include "../src/threeAdressCode.h"
+	#include "../src/genAssemble.h"
 
 
 // Generated from CACT.g4 by ANTLR 4.8
@@ -214,6 +215,7 @@ public:
   class  FuncDefContext : public antlr4::ParserRuleContext {
   public:
     threeAdressCode code;
+    struct paramList * plist;
     FuncDefContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     FuncTypeContext *funcType();
@@ -243,6 +245,7 @@ public:
 
   class  FuncFParamsContext : public antlr4::ParserRuleContext {
   public:
+    struct paramList * plist;
     FuncFParamsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<FuncFParamContext *> funcFParam();

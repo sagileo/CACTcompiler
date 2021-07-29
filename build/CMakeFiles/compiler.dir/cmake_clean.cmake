@@ -3,6 +3,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/compiler.dir/grammar/CACTLexer.cpp.o"
   "CMakeFiles/compiler.dir/grammar/CACTListener.cpp.o"
   "CMakeFiles/compiler.dir/grammar/CACTParser.cpp.o"
+  "CMakeFiles/compiler.dir/src/genAssemble.cpp.o"
   "CMakeFiles/compiler.dir/src/main.cpp.o"
   "CMakeFiles/compiler.dir/src/semanticAnalysis.cpp.o"
   "CMakeFiles/compiler.dir/src/symbolTable.cpp.o"

@@ -29,6 +29,7 @@ struct FuncInfo;
 struct VarInfo
 {
     std::string name;
+	int scopeID;
     int btype;
     int is_const;
     //int vartype;    // basic or array
@@ -38,6 +39,7 @@ struct VarInfo
 struct ScopeTable
 {
     int start_line;
+	int id;
     std::map<int, ScopeTable *> children;
     std::map<std::string, VarInfo> local_var;
     ScopeTable *parent;
@@ -67,7 +69,29 @@ class SymbolTable
         SymbolTable(){
             curr_scope = NULL;
 
-            addFunc("print_int", FUNC_VOID, 0);
+			add_default_funcs();
+        };
+        ~SymbolTable(){};
+
+
+        //look up var in current scope
+        VarInfo * lookup_curr(const std::string &name);
+        //look up var in all scope
+        VarInfo * lookup_all(const std::string &name);
+        //look up function
+        FuncInfo * lookup_func(const std::string &name);
+        //look up parameter
+        VarInfo *lookup_para(FuncInfo * func, int index);
+
+        void addFunc(std::string name, int ret_type, int start_line);
+        void addPara(std::string name, int btype, int len);
+        void addVar(std::string name, int btype, int len, int is_const);
+        void addScope(int start_line);
+
+        void scope_ret();
+		void add_default_funcs()
+		{
+			addFunc("print_int", FUNC_VOID, 0);
             addPara("a", BTYPE_INT, 0);
             scope_ret();
 
@@ -91,28 +115,19 @@ class SymbolTable
 
             addFunc("get_double", FUNC_DOUBLE, 0);
             scope_ret();
-        };
-        ~SymbolTable(){};
-
-
-        //look up var in current scope
-        VarInfo * lookup_curr(const std::string &name);
-        //look up var in all scope
-        VarInfo * lookup_all(const std::string &name);
-        //look up function
-        FuncInfo * lookup_func(const std::string &name);
-        //look up parameter
-        VarInfo *lookup_para(FuncInfo * func, int index);
-
-        void addFunc(std::string name, int ret_type, int start_line);
-        void addPara(std::string name, int btype, int len);
-        void addVar(std::string name, int btype, int len, int is_const);
-        void addScope(int start_line);
-
-        void scope_ret();
+		}
+		void reset()
+		{
+			curr_scope = nullptr;
+			global_var.clear();
+			func.clear();
+			add_default_funcs();
+		}
 };
 
 extern int semanticErrors;
 extern SymbolTable sym_table;
+
+int getNum();
 
 #endif
